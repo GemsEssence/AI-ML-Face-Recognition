@@ -8,40 +8,25 @@ This project is a Python-based face detection tool that uses the `dlib`, `face-r
 - Identifies known faces by comparing them with saved facial encodings.
 - Adjustable to handle different face recognition scenarios, such as single or multiple face detection.
 
-## Requirements
-
-The following dependencies are required to run this project. Install them using the provided `requirements.txt` file:
-
-```plaintext
-click==8.1.7
-dlib==19.24.6
-face-recognition==1.3.0
-face_recognition_models==0.3.0
-numpy==2.1.3
-opencv-python==4.10.0.84
-pillow==11.0.0
-```
-
 ## Installation
 
 1. **Clone this repository**:
    ```bash
-   git clone https://github.com/your-username/face-detection
-   cd face-detection
+   git clone git@github.com:GemsEssence/AI-ML-Face-Recognition-.git
    ```
 
 2. **Create and activate a virtual environment**:
 
    - **On Windows**:
      ```bash
-     python -m venv venv
-     .\venv\Scripts\activate
+     python -m venv env
+     env\Scripts\activate.bat
      ```
 
    - **On macOS and Linux**:
      ```bash
-     python3 -m venv venv
-     source venv/bin/activate
+     python3 -m venv env
+     source env/bin/activate
      ```
 
 3. **Install the dependencies**:
@@ -50,14 +35,15 @@ pillow==11.0.0
    ```
 
 ## Usage
+1. Add face images to the **train** directory for the individuals you want to detect. 
+2. Run the face detection script with the following command:
 
-Run the face detection script with the following command:
-
-```bash
-python face_detection.py
-```
-
-This command will start the script, which can be configured to detect faces from an image file or a video feed.
+    ```bash
+    python face_detection.py
+    ```
+    
+    This command will start the script, which can be configured to detect faces from an image file or a video feed.
+3. Press "**q**" key to close the program.
 
 ## Project Structure
 
