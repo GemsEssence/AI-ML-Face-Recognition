@@ -24,7 +24,7 @@ class Face_Detection(QMainWindow):
         # Timer for updating camera frames
         self.image_widget_timer = QTimer(self)
         self.image_widget_timer.timeout.connect(self.update_camera_frame)
-        
+
         # Video capture
         self.cap = cv2.VideoCapture(0)
 
@@ -33,8 +33,17 @@ class Face_Detection(QMainWindow):
         self.classNames = []
         self.uploaded_image = False
         self.captured_image = False
+        self.show_age_and_gender = False
         self.load_images()
         self.encoded_face_train = self.findEncodings(self.images)
+
+        # Load age and gender models
+        self.age_net = cv2.dnn.readNetFromCaffe('age_deploy.prototxt', 'age_net.caffemodel')
+        self.gender_net = cv2.dnn.readNetFromCaffe('gender_deploy.prototxt', 'gender_net.caffemodel')
+
+        self.age_list = ['(0-3)', '(4-7)', '(8-14)', '(15-20)', '(21-24)', '(25-37)', '(38-47)', '(48-59)', '(60-100)']
+        self.gender_list = ['Male', 'Female']
+        self.MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
 
         self.start_webcam()
         self.start_main_widget_timer()
@@ -50,6 +59,7 @@ class Face_Detection(QMainWindow):
 
     def setup_connections(self):
         self.ui.add_prsn_btn.clicked.connect(self.image_widget)
+        self.ui.age_gender_btn.clicked.connect(self.show_age_and_gender)
         self.ui.back_btn.clicked.connect(self.main_widget)
         self.ui.img_upload_btn.clicked.connect(self.upload_image)
         self.ui.camera_btn.clicked.connect(self.start_camera)
@@ -233,6 +243,11 @@ class Face_Detection(QMainWindow):
         self.captured_image = True
 
 
+    def show_age_and_gender(self):
+        self.show_age_and_gender = not self.show_age_and_gender
+        self.update_frame()
+
+
     def update_frame(self):
         success, img = self.cap.read()
         if not success:
@@ -261,9 +276,29 @@ class Face_Detection(QMainWindow):
 
             y1, x2, y2, x1 = faceloc
             y1, x2, y2, x1 = y1 * 2, x2 * 2, y2 * 2, x1 * 2
-            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
-            cv2.putText(img, name, (x1 + 6, y2 - 5), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+            face = img[y1:y2, x1:x2]
+
+            # Display name
+            label_name = f"{name}"
+            cv2.putText(img, label_name, (x1 + 6, y1 - 10), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 1)
+
+            if self.show_age_and_gender:
+                # Predict age and gender
+                blob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), self.MODEL_MEAN_VALUES, swapRB=False)
+                self.gender_net.setInput(blob)
+                gender_preds = self.gender_net.forward()
+                gender = self.gender_list[gender_preds[0].argmax()]
+
+                self.age_net.setInput(blob)
+                age_preds = self.age_net.forward()
+                age = self.age_list[age_preds[0].argmax()]
+
+                # Display age and gender
+                label_gender_age = f"{gender}, {age}"
+                cv2.putText(img, label_gender_age, (x1 + 6, y2 + 25), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 1)
+
+            # Draw rectangle around face
+            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 1)
 
         # Resize the image to fit the dimensions of video_label
         video_img_size = self.ui.video_label.size()
@@ -274,7 +309,7 @@ class Face_Detection(QMainWindow):
         step = channel * width
         qImg = QImage(img.data, width, height, step, QImage.Format.Format_RGB888)
         self.ui.video_label.setPixmap(QPixmap.fromImage(qImg))
-        
+
 
     def closeEvent(self, event):
         self.stop_main_widget_timer()
