@@ -25,8 +25,16 @@ class Face_Detection(QMainWindow):
         self.image_widget_timer = QTimer(self)
         self.image_widget_timer.timeout.connect(self.update_camera_frame)
 
+        # Camera selection
+        self.available_cameras = self.get_available_cameras()
+        self.selected_camera_index = self.available_cameras[0]  # Default to the first camera
+
         # Video capture
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(self.selected_camera_index)
+
+        self.ui.camera_select_dropdown.clear()
+        for camera_index in self.available_cameras:
+            self.ui.camera_select_dropdown.addItem(f"Camera {camera_index}", camera_index)
 
         # Load known encodings
         self.images = []
@@ -59,6 +67,7 @@ class Face_Detection(QMainWindow):
 
     def setup_connections(self):
         self.ui.add_prsn_btn.clicked.connect(self.image_widget)
+        self.ui.camera_select_dropdown.currentIndexChanged.connect(self.change_camera)
         self.ui.age_gender_btn.clicked.connect(self.show_age_and_gender)
         self.ui.back_btn.clicked.connect(self.main_widget)
         self.ui.img_upload_btn.clicked.connect(self.upload_image)
@@ -111,8 +120,27 @@ class Face_Detection(QMainWindow):
         return encodeList
 
 
+    def get_available_cameras(self):
+        # Find all available camera indices.
+        camera_indices = []
+        for i in range(5):  # Check up to 5 cameras
+            cap = cv2.VideoCapture(i)
+            if cap.read()[0]:
+                camera_indices.append(i)
+            cap.release()
+        return camera_indices
+
+
+    def change_camera(self, index):
+        # Change the camera based on the dropdown selection.
+        self.selected_camera_index = index
+        self.stop_webcam()
+        self.start_webcam()
+
+
     def start_webcam(self):
-        self.cap.open(0)  # Open webcam
+        selected_camera_index = self.ui.camera_select_dropdown.currentData()
+        self.cap.open(selected_camera_index)
 
 
     def stop_webcam(self):

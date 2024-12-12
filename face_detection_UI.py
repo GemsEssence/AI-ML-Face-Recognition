@@ -66,8 +66,8 @@ class Ui_Face_Detection(object):
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.frame_2.setObjectName("frame_2")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.frame_2)
-        self.verticalLayout_2.setContentsMargins(10, 0, 10, 0)
-        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setContentsMargins(10, 20, 10, 0)
+        self.verticalLayout_2.setSpacing(30)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.frame_3 = QtWidgets.QFrame(parent=self.frame_2)
         self.frame_3.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
@@ -99,7 +99,30 @@ class Ui_Face_Detection(object):
         self.age_gender_btn.setObjectName("age_gender_btn")
         self.verticalLayout_6.addWidget(self.age_gender_btn)
         self.verticalLayout_2.addWidget(self.frame_4)
-        self.horizontalLayout_3.addWidget(self.frame_2)
+        self.frame_10 = QtWidgets.QFrame(parent=self.frame_2)
+        self.frame_10.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
+        self.frame_10.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
+        self.frame_10.setObjectName("frame_10")
+        self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.frame_10)
+        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_12.setSpacing(0)
+        self.verticalLayout_12.setObjectName("verticalLayout_12")
+        self.camera_select_dropdown = QtWidgets.QComboBox(parent=self.frame_10)
+        self.camera_select_dropdown.setStyleSheet("/*\n"
+"\n"
+"QComboBox {\n"
+"    padding: 10px 60px;\n"
+"}\n"
+"*/\n"
+"\n"
+"QComboBox {\n"
+"    padding: 10px 40px;\n"
+"}")
+        self.camera_select_dropdown.setObjectName("camera_select_dropdown")
+        self.camera_select_dropdown.addItem("")
+        self.verticalLayout_12.addWidget(self.camera_select_dropdown)
+        self.verticalLayout_2.addWidget(self.frame_10)
+        self.horizontalLayout_3.addWidget(self.frame_2, 0, QtCore.Qt.AlignmentFlag.AlignTop)
         self.horizontalLayout_2.addWidget(self.frame)
         self.stackedWidget.addWidget(self.main_widget)
         self.image_widget = QtWidgets.QWidget()
@@ -329,6 +352,7 @@ class Ui_Face_Detection(object):
         Face_Detection.setWindowTitle(_translate("Face_Detection", "Face Detection"))
         self.add_prsn_btn.setText(_translate("Face_Detection", "Add Person"))
         self.age_gender_btn.setText(_translate("Face_Detection", "Age & Gender"))
+        self.camera_select_dropdown.setItemText(0, _translate("Face_Detection", "Select Camera"))
         self.img_upload_btn.setText(_translate("Face_Detection", "Upload Image"))
         self.camera_btn.setText(_translate("Face_Detection", "Camera"))
         self.capture_btn.setText(_translate("Face_Detection", "Click Photo"))
